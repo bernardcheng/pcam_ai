@@ -57,7 +57,7 @@ if __name__ == "__main__":
         help="Dataset path")
     parser.add_argument('-m', '--model', type=str, required=False, default='model_10_epochs.h5', 
         help="Dataset path")
-    parser.add_argument('-vs', '--val_size', type=int, required=False, default=2**15, 
+    parser.add_argument('-vs', '--val_size', type=int, required=False, default=2**15-1, 
         help="Number of train dataset")
     parser.add_argument('-o', '--output', type=str, required=False, default='output', 
         help="Directory for output")

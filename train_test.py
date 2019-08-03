@@ -148,12 +148,12 @@ if __name__ == "__main__":
         help="Learning rate for optimizer")
     parser.add_argument('-b', '--batch', type=int, required=False, default=32, 
         help="Number of batch size")
-    parser.add_argument('-ts', '--train_size', type=int, required=False, default=2e18, 
+    parser.add_argument('-d', '--data', type=str, required=False, default='/home/ubuntu/data/patchcamelyon', 
+        help="Dataset path")
+    parser.add_argument('-ts', '--train_size', type=int, required=False, default=2e18-1, 
         help="Number of train dataset")
-    parser.add_argument('-vs', '--val_size', type=int, required=False, default=2e15, 
-        help="Number of train dataset")
-    parser.add_argument('-s', '--size', type=int, required=False, default=-1, 
-        help="Number of each dataset")
+    parser.add_argument('-vs', '--val_size', type=int, required=False, default=2e15-1, 
+        help="Number of val & test dataset")
     parser.add_argument('-o', '--output', type=str, required=False, default='output', 
         help="Directory for output")
     parser.add_argument('-l', '--limit', type=bool, required=False, default=True, 
