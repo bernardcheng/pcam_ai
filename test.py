@@ -30,8 +30,8 @@ def load_test_data():
     test_x_path = os.path.join(data_path, 'camelyonpatch_level_2_split_test_x.h5')
     test_y_path = os.path.join(data_path, 'camelyonpatch_level_2_split_test_y.h5')
 
-    x_test = np.array(HDF5Matrix(test_x_path, 'x', start=0, end=data_size))
-    y_test = np.array(HDF5Matrix(test_y_path, 'y', start=0, end=data_size)).reshape([-1,1])
+    x_test = np.array(HDF5Matrix(test_x_path, 'x', start=0, end=val_size))
+    y_test = np.array(HDF5Matrix(test_y_path, 'y', start=0, end=val_size)).reshape([-1,1])
     print("# Loaded x_test {0} y_test {1}.".format(x_test.shape, y_test.shape))
     return x_test, y_test
 
@@ -57,8 +57,8 @@ if __name__ == "__main__":
         help="Dataset path")
     parser.add_argument('-m', '--model', type=str, required=False, default='model_10_epochs.h5', 
         help="Dataset path")
-    parser.add_argument('-s', '--size', type=int, required=False, default=-1, 
-        help="Number of each dataset")
+    parser.add_argument('-vs', '--val_size', type=int, required=False, default=2**15, 
+        help="Number of train dataset")
     parser.add_argument('-o', '--output', type=str, required=False, default='output', 
         help="Directory for output")
     parser.add_argument('-l', '--limit', type=bool, required=False, default=True, 
@@ -68,7 +68,7 @@ if __name__ == "__main__":
     batch_size = args.batch
     data_path = args.data
     best_model_file = args.model
-    data_size = args.size
+    val_size = args.val_size
     output_dir = args.output
     limit = args.limit
 

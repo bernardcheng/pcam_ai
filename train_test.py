@@ -37,12 +37,12 @@ def load_data(data_path='/home/ubuntu/data/patchcamelyon'):
     test_x_path = os.path.join(data_path, 'camelyonpatch_level_2_split_test_x.h5')
     test_y_path = os.path.join(data_path, 'camelyonpatch_level_2_split_test_y.h5')
 
-    x_train = np.array(HDF5Matrix(train_x_path, 'x', start=0, end=data_size))
-    y_train = np.array(HDF5Matrix(train_y_path, 'y', start=0, end=data_size)).reshape([-1,1])
-    x_val = np.array(HDF5Matrix(val_x_path, 'x', start=0, end=data_size))
-    y_val = np.array(HDF5Matrix(val_y_path, 'y', start=0, end=data_size)).reshape([-1,1])
-    x_test = np.array(HDF5Matrix(test_x_path, 'x', start=0, end=data_size))
-    y_test = np.array(HDF5Matrix(test_y_path, 'y', start=0, end=data_size)).reshape([-1,1])
+    x_train = np.array(HDF5Matrix(train_x_path, 'x', start=0, end=train_size))
+    y_train = np.array(HDF5Matrix(train_y_path, 'y', start=0, end=train_size)).reshape([-1,1])
+    x_val = np.array(HDF5Matrix(val_x_path, 'x', start=0, end=val_size))
+    y_val = np.array(HDF5Matrix(val_y_path, 'y', start=0, end=val_size)).reshape([-1,1])
+    x_test = np.array(HDF5Matrix(test_x_path, 'x', start=0, end=val_size))
+    y_test = np.array(HDF5Matrix(test_y_path, 'y', start=0, end=val_size)).reshape([-1,1])
     print("# Loaded train data {0}, val data {1}, test data {2}.".format(x_train.shape, x_val.shape, x_test.shape))
     return x_train, y_train, x_val, y_val, x_test, y_test
 
@@ -78,7 +78,7 @@ def train(x_train, y_train, x_val, y_val):
     # define new model
     model = Model(inputs=new_input, outputs=out)
     # Specify the training configuration (optimizer, loss, metrics)
-    model.compile(optimizer=keras.optimizers.Adam(0.0001),  # Optimizer
+    model.compile(optimizer=keras.optimizers.Adam(learning_rate),  # Optimizer
                 # Loss function to minimize
                 loss=keras.losses.binary_crossentropy,
                 # List of metrics to monitor
@@ -87,7 +87,7 @@ def train(x_train, y_train, x_val, y_val):
     # plot_model(model, to_file='model.png')
 
     print('# Fit model on training data')
-    h5_path = os.path.join(output_dir,"model_{}_epochs_{}.h5".format(epochs,idx))
+    h5_path = os.path.join(output_dir,"model_{}_epochs_{}_lr_{}_idx.h5".format(epochs,learning_rate,idx))
     checkpoint = ModelCheckpoint(h5_path, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
 
     history = model.fit_generator(datagen.flow(x_train, y_train, batch_size=batch_size),
@@ -110,7 +110,7 @@ def plot(history):
     plt.ylabel('Accuracy')
     plt.xlabel('Epoch')
     plt.legend(['Train', 'Val'], loc='upper left')
-    plt.savefig(os.path.join(output_dir, "train_acc_{}_epochs_{}.png".format(epochs,idx)))
+    plt.savefig(os.path.join(output_dir, "train_acc_{}_epochs_{}_lr_{}_idx.png".format(epochs,learning_rate,idx)))
 
     # Plot training & validation loss values
     plt.figure(2)
@@ -121,7 +121,7 @@ def plot(history):
     plt.ylabel('Loss')
     plt.xlabel('Epoch')
     plt.legend(['Train', 'Val'], loc='upper left')
-    plt.savefig(os.path.join(output_dir, "train_loss_{}_epochs{}.png".format(epochs,idx)))
+    plt.savefig(os.path.join(output_dir, "train_loss_{}_epochs_{}_lr_{}_idx.png".format(epochs,learning_rate,idx)))
 
 def test(x_test, y_test):
     """Test the model with highest val accuracy."""
@@ -129,7 +129,7 @@ def test(x_test, y_test):
     test_datagen = ImageDataGenerator(preprocessing_function=preprocess_input)
 
     # load model and specify a new input shape for images
-    best_model_path = os.path.join(output_dir, 'model_{}_epochs_{}.h5'.format(epochs,idx))
+    best_model_path = os.path.join(output_dir, 'model_{}_epochs_{}_lr_{}_idx.h5'.format(epochs,learning_rate,idx))
     best_model = tf.keras.models.load_model(best_model_path)
 
     # Evaluate the model on the test data using `evaluate`
@@ -144,10 +144,14 @@ if __name__ == "__main__":
         help="Index number when saving graphs and model")
     parser.add_argument('-e', '--epochs', type=int, required=False, default=10, 
         help="Number of epochs for train & val")
+    parser.add_argument('-lr', '--learning_rate', type=float, required=False, default=1e-4, 
+        help="Learning rate for optimizer")
     parser.add_argument('-b', '--batch', type=int, required=False, default=32, 
         help="Number of batch size")
-    parser.add_argument('-d', '--data', type=str, required=False, default='/home/ubuntu/data/patchcamelyon', 
-        help="Dataset path")
+    parser.add_argument('-ts', '--train_size', type=int, required=False, default=2e18, 
+        help="Number of train dataset")
+    parser.add_argument('-vs', '--val_size', type=int, required=False, default=2e15, 
+        help="Number of train dataset")
     parser.add_argument('-s', '--size', type=int, required=False, default=-1, 
         help="Number of each dataset")
     parser.add_argument('-o', '--output', type=str, required=False, default='output', 
@@ -158,9 +162,11 @@ if __name__ == "__main__":
 
     idx = args.idx
     epochs = args.epochs
+    learning_rate = args.learning_rate
     batch_size = args.batch
     data_path = args.data
-    data_size = args.size
+    train_size = args.train_size
+    val_size = args.val_size
     output_dir = args.output
     limit = args.limit
 
