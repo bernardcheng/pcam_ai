@@ -1,6 +1,6 @@
 import os, keras, argparse
-from keras.applications.nasnet import NASNetMobile, preprocess_input
-from keras.layers import Dense, Input, Dropout, Concatenate, GlobalMaxPooling2D, GlobalAveragePooling2D, Flatten
+from keras.applications.resnet50 import ResNet50, preprocess_input
+from keras.layers import Dense, Input, Dropout, GlobalMaxPooling2D, BatchNormalization
 from keras.models import Model
 from keras.utils import HDF5Matrix, plot_model
 from keras.preprocessing.image import ImageDataGenerator
@@ -58,7 +58,7 @@ def train(x_train, y_train, x_val, y_val):
 
     # load model and specify a new input shape for images
     new_input = Input(shape=(96, 96, 3))
-    base_model = NASNetMobile(include_top=False, input_tensor=new_input)
+    base_model = ResNet50(include_top=False, input_tensor=new_input)
 
     # mark loaded layers as not trainable
     for layer in base_model.layers:
@@ -66,12 +66,10 @@ def train(x_train, y_train, x_val, y_val):
 
     # add new classifier layers
     x = base_model(new_input)
-    out1 = GlobalMaxPooling2D()(x)
-    out2 = GlobalAveragePooling2D()(x)
-    out3 = Flatten()(x)
-    out = Concatenate(axis=-1)([out1, out2, out3])
-    out = Dropout(0.5)(out)
-    out = Dense(1, activation="sigmoid", name="3_")(out)
+    x = Dropout(0.3)(x)
+    x = BatchNormalization(axis=3)(x)
+    x = GlobalMaxPooling2D()(x)
+    out = Dense(1, activation="relu")(x)
 
     # define new model
     model = Model(inputs=new_input, outputs=out)
@@ -85,7 +83,7 @@ def train(x_train, y_train, x_val, y_val):
     # plot_model(model, to_file='model.png')
 
     print('# Fit model on training data')
-    h5_path = os.path.join(output_dir,"model_{}_epochs_{}_lr_{}_idx.h5".format(epochs,learning_rate,idx))
+    h5_path = os.path.join(output_dir,"model_resnet50_{}_epochs_{}_lr_{}_idx.h5".format(epochs,learning_rate,idx))
     checkpoint = ModelCheckpoint(h5_path, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
 
     history = model.fit_generator(datagen.flow(x_train, y_train, batch_size=batch_size),
@@ -108,7 +106,7 @@ def plot(history):
     plt.ylabel('Accuracy')
     plt.xlabel('Epoch')
     plt.legend(['Train', 'Val'], loc='upper left')
-    plt.savefig(os.path.join(output_dir, "train_acc_{}_epochs_{}_lr_{}_idx.png".format(epochs,learning_rate,idx)))
+    plt.savefig(os.path.join(output_dir, "train_acc_resnet50_{}_epochs_{}_lr_{}_idx.png".format(epochs,learning_rate,idx)))
 
     # Plot training & validation loss values
     plt.figure(2)
@@ -119,7 +117,7 @@ def plot(history):
     plt.ylabel('Loss')
     plt.xlabel('Epoch')
     plt.legend(['Train', 'Val'], loc='upper left')
-    plt.savefig(os.path.join(output_dir, "train_loss_{}_epochs_{}_lr_{}_idx.png".format(epochs,learning_rate,idx)))
+    plt.savefig(os.path.join(output_dir, "train_loss_resnet50_{}_epochs_{}_lr_{}_idx.png".format(epochs,learning_rate,idx)))
 
 def test(x_test, y_test):
     """Test the model with highest val accuracy."""
@@ -127,7 +125,7 @@ def test(x_test, y_test):
     test_datagen = ImageDataGenerator(preprocessing_function=preprocess_input)
 
     # load model and specify a new input shape for images
-    best_model_path = os.path.join(output_dir, 'model_{}_epochs_{}_lr_{}_idx.h5'.format(epochs,learning_rate,idx))
+    best_model_path = os.path.join(output_dir, 'model_resnet50_{}_epochs_{}_lr_{}_idx.h5'.format(epochs,learning_rate,idx))
     best_model = tf.keras.models.load_model(best_model_path)
 
     # Evaluate the model on the test data using `evaluate`
