@@ -14,7 +14,7 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Model, Sequential
 from keras.models import load_model
 from keras.optimizers import Adam, SGD
-from keras_OneCycle import OneCycle
+# from keras_OneCycle import OneCycle
 
 def make_data(x_dir, y_dir, normalise = False):
     x = np.array(HDF5Matrix(x_dir, 'x'))
