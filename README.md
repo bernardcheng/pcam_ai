@@ -150,3 +150,7 @@ To better understand how well the classifier is at predicting cancer, it is impo
 | False Positive (FP)                 | False Negative (FN)               |
 | ---------------------------------- | --------------------------------- |
 | ![alt text](readme_images/FP.PNG) | ![alt text](readme_images/FN.PNG) |
+
+Additionally, it might be useful to observe a sample of images that are the most misclassified (i.e. the prediction score is furthest from the truth label). 
+
+![alt text](readme_images/most_misclassified.PNG)
