@@ -6,7 +6,7 @@
 To run train & test at the same time:
 
 ```bash
-python train_test.py 
+python train_test.py -d [PATH_TO_DATA]
 ```
 
 - ''-i', '--idx', type=int, required=False, default=1, help="Index number when saving graphs and model")
@@ -30,7 +30,7 @@ python train_test.py
 To test on a model:
 
 ```bash
-python test.py
+python test.py -m [PATH_TO_MODEL] -d [PATH_TO_DATA]
 ```
 
 - '-b', '--batch', type=int, required=False, default=32, help="Number of batch size")

@@ -60,16 +60,21 @@ def train(x_train, y_train, x_val, y_val):
     new_input = Input(shape=(96, 96, 3))
     base_model = ResNet50(include_top=False, input_tensor=new_input)
 
-    # mark loaded layers as not trainable
-    for layer in base_model.layers:
-        layer.trainable = False
+    # Let's take a look to see how many layers are in the base model (175 Resnet50)
+    print("Number of layers in the base model: ", len(base_model.layers))
+
+    # Fine tune from this layer onwards
+    fine_tune_at = 165
+
+    # Freeze all the layers before the `fine_tune_at` layer
+    for layer in base_model.layers[:fine_tune_at]:
+        layer.trainable =  False
 
     # add new classifier layers
     x = base_model(new_input)
-    x = Dropout(0.3)(x)
-    x = BatchNormalization(axis=3)(x)
+    x = Dropout(0.5)(x)
     x = GlobalMaxPooling2D()(x)
-    out = Dense(1, activation="relu")(x)
+    out = Dense(1, activation="sigmoid")(x)
 
     # define new model
     model = Model(inputs=new_input, outputs=out)
