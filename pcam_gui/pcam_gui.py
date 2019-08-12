@@ -44,7 +44,7 @@ def process():
     if not 'filename' in globals():
         messagebox.showerror("Processing Error", "No file detected: Please select valid file under Insert image to label.")
     if not 'h5filename' in globals():
-        messagebox.showerror("Processing Error", "No file detected: Please select valid file under Select model weights file (.h5) to use.")
+        messagebox.showerror("Processing Error", "No file detected: Please select valid file under Select model weights file to use.")
     else:
         global filename, h5filename
         # pred_label.delete(0.0, END)
@@ -61,7 +61,7 @@ def process():
         pred = model.predict(x, batch_size = 1, verbose = 1)
         print('Prediction Score: ', pred)
 
-        if pred[0][0] >= .5:
+        if np.around(pred[0][0]) == 1.0:
             pred_label.config(text=f'Prediction Result: Malignant ({pred[0][0]})')
         else:
             pred_label.config(text=f'Prediction Result: Benign ({pred[0][0]})')

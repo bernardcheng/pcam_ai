@@ -82,7 +82,7 @@ To use **Tkinter GUI**:
 
 Note: Tkinter GUI may become temporarily slow/responsive during model prediction.
 
-![alt text](sample_gui.PNG)
+![alt text](readme_images/sample_gui.PNG)
 
 ### Result & Analysis
 
@@ -123,3 +123,30 @@ Similar to the Resnet50 model, the Densenet169 model was trained with alteration
 | 169 (All)                    | 85.42%        |
 
 *Result above are trained by Densenet169 with 0.5 dropout rates
+
+### Classification Interpretation ###
+
+Using the best model weights obtained (Densenet169 - All layers), the analysis of its outputs is summarized by plotting the confusion matrix using the images and labels from the test set.
+
+![alt text](readme_images/classification_interpretation.PNG)
+
+The precision, recall and F1-score metrics are used to further assess the generated confusion matrix. Precision measures the ability of the classifier not to mis-label a negative sample as positive while recall measures the ability of the classifier to find all the positive samples.  F1 score can be interpreted as a weighted average of the precision and recall.
+
+
+Metrics  | Densenet169
+-------- | ------------------
+Precision| 0.8489782679208563
+Recall   | 0.7991085058313488
+F1-score |0.8232888777050831
+
+
+
+To better understand how well the classifier is at predicting cancer, it is important to look at the images that are labelled under True Positive (TP), True Negative (TN), False Positive (FP) and False Negative (FN).
+
+| True Positive (TP)                | True Negative (TN)                 |
+| --------------------------------- | --------------------------------- |
+| ![alt text](readme_images/TP.PNG) | ![alt text](readme_images/TN.PNG) |
+
+| False Positive (FP)                 | False Negative (FN)               |
+| ---------------------------------- | --------------------------------- |
+| ![alt text](readme_images/FP.PNG) | ![alt text](readme_images/FN.PNG) |
