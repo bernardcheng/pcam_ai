@@ -11,31 +11,45 @@ from keras.applications.resnet50 import preprocess_input
 
 IMG_WIDTH = 96
 IMG_HEIGHT = 96
-MODEL_FILE = 'resnet-all-freeze.h5'
+# MODEL_FILE = 'resnet-all-freeze.h5'
 
 # On-click functions
 
-def browse():
+def browse_img():
     # Allow user to select a directory and store it in global var called filename
     global filename, selected
     filename = filedialog.askopenfilename(filetypes = (("jpeg files","*.jpg"),("png files","*.png*")))
-    imgPath_label.config(text=filename)
+    if len(filename) >= 40:
+        imgPath_label.config(text= filename[:3] + "..." + filename[-40:])
+    else:
+        imgPath_label.config(text= filename[:3] + "..." + filename[-len(filename):])
     print('Selected file: ',filename)
-    selected = True
 
     # Display selected image in imgDisplay_label
     tkimage = ImageTk.PhotoImage(Image.open(filename).resize((300,300)))
     imgDisplay_label = Label(window, image = tkimage).grid(row = 4, column = 0, sticky = W)
     imgDisplay_label.pack() # Ignore Attribute Error
 
+def browse_h5():
+    # Allow user to select a directory and store it in global var called h5filename (default location: model_ckpt)
+    global h5filename, selected
+    h5filename = filedialog.askopenfilename(filetypes = [("All files","*.*")])
+    if len(h5filename) >= 40:
+        h5Path_label.config(text= h5filename[:3] + "..." + h5filename[-40:])
+    else:
+        h5Path_label.config(text= h5filename[:3] + "..." + h5filename[-len(h5filename):])
+    print('Selected model file: ', h5filename)
 
 def process():
     if not 'filename' in globals():
         messagebox.showerror("Processing Error", "No file detected: Please select valid file under Insert image to label.")
+    if not 'h5filename' in globals():
+        messagebox.showerror("Processing Error", "No file detected: Please select valid file under Select model weights file (.h5) to use.")
     else:
-        global filename
+        global filename, h5filename
         # pred_label.delete(0.0, END)
-        model = load_model(os.path.join(os.getcwd(), 'model_ckpt') + '\\' + MODEL_FILE)
+        # model = load_model(os.path.join(os.getcwd(), 'model_ckpt') + '\\' + MODEL_FILE)
+        model = load_model(h5filename)
 
         new_image = image.load_img(filename, target_size=(IMG_HEIGHT,IMG_WIDTH))
         x = image.img_to_array(new_image)
@@ -52,7 +66,6 @@ def process():
         else:
             pred_label.config(text=f'Prediction Result: Benign ({pred[0][0]})')
 
-
 def close_window():
     window.destroy()
     exit()
@@ -61,34 +74,45 @@ def close_window():
 window = Tk()
 window.title("PCAM Classification")
 window.configure(background ="white")
-window.iconbitmap('sutd.ico')
+window.iconbitmap('static/sutd.ico')
 
 ### Tkinter GUI Layout
 
-### Create Label
-insertimg_label = Label(window, text = "Insert image file to label", bg = "white", fg = "black", font = "none 12 bold")
+### Create Image File Selection Label
+insertimg_label = Label(window, text = "Select image file to label", bg = "white", fg = "black", font = "none 12 bold")
 insertimg_label.grid(row = 0, column = 0, sticky = W)
 
 ### Add a browse button to search for file
-Button(window, text = "Browse", width = 10, command = browse).grid(row = 3, column = 1, sticky = E)
+Button(window, text = "Select", width = 10, command = browse_img).grid(row = 1, column = 1, sticky = E)
 
 ### Create label box for file directory
 imgPath_label = Label(window, bg = "white", fg = "black", font = "none 10",)
-imgPath_label.grid(row = 3, column = 0, sticky = W)
+imgPath_label.grid(row = 1, column = 0, sticky = W)
+
+### Create .h5 File Selection Label
+h5_label = Label(window, text = "Select model weights file (.h5) to use", bg = "white", fg = "black", font = "none 12 bold")
+h5_label.grid(row = 2, column = 0, sticky = W)
+
+### Add a browse button to search for file
+Button(window, text = "Select", width = 10, command = browse_h5).grid(row = 3, column = 1, sticky = E)
+
+### Create label box for file directory
+h5Path_label = Label(window, bg = "white", fg = "black", font = "none 10",)
+h5Path_label.grid(row = 3, column = 0, sticky = W)
 
 ### Loads selected image after browse
-selected_img = Image.open("no_img_selected.png").resize((300,300))
+selected_img = Image.open("static/no_img_selected.png").resize((300,300))
 tkimage = ImageTk.PhotoImage(selected_img)
 imgDisplay_label = Label(window, image = tkimage).grid(row = 4, column = 0, sticky = W)
 
 ### Add a Predict button to run model on selected image
-Button(window, text = "Predict", width = 10, command = process).grid(row = 5, column = 1, sticky = W)
+Button(window, text = "Predict", width = 10, command = process).grid(row = 4, column = 1, sticky = W)
 
 ### Prediction Label
 Label(window, text = "Prediction", bg = "white", fg = "black", font = "none 12 bold").grid(row =6, column = 0, sticky = W)
 
 ### Create label box for prediction results
-pred_label = Label(window, text = "Not Implemented Yet.", bg = "white", fg = "black", font = "none 10",)
+pred_label = Label(window, text = "None", bg = "white", fg = "black", font = "none 10",)
 pred_label.grid(row = 7, column = 0, sticky = W)
 
 ### Exit Label
