@@ -59,15 +59,21 @@ python test.py -m [PATH_TO_MODEL] -d [DIR_TO_DATA]
 
 
 
-To use **GUI**:
+To run **Tkinter GUI** script:
 
 ```python
 python pcam_gui.py
 ```
 
+To use **Tkinter GUI**:
 
+* Select an image to analyze (Default images are provided in /sample_imgs folder)
+* Select a model weight file (.h5) to use for prediction (Default folder is /model_ckpt)
+* Press *Predict* to generate model prediction score
 
+Note: Tkinter GUI may become temporarily slow/responsive during model prediction.
 
+![alt text](D:\School\Course Material\Term 8\50.021 - Artificial Intelligence\Project\pcam_ai\sample_gui.PNG)
 
 
 
