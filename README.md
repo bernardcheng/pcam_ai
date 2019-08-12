@@ -10,13 +10,13 @@
 
 ### Project Introduction
 
-The project aims to explore different neural networks, data augmentation methods and other training parameters to classify camelyon from histopathologic scans of lymph node sections. We also created a GUI as a platform to make prediction on any picture chosen by user using our pre-trained classifiers. In this project, we have explored Resnet50, and Densenet169. 
+The project aims to explore different neural networks, data augmentation methods and other training parameters to classify camelyon from histopathologic scans of lymph node sections. We also created a GUI as a platform to make prediction on any picture chosen by user using our pre-trained classifiers. In this project, we have explored Resnet50, and Densenet169.
 
 ### Approach & Chosen Models
 
 Due to the size and complexity of the dataset, a deep convolutional network would be instrumental in learning the nuanced features in cell images. Hence, we decided to capitalize on the pre-trained models available on Keras, namely Resnet50 and Densenet169. Instead of using the Imagenet weights available in the package, we experimented with trainable layers. After all, Imagenet weights were learned from images such as animals, people and nature, just to name a few, which are markedly different from cancer cell images. Moreover, we included pooling and dropout layers before a sigmoid activated FC layer at the end, tested with different dropout rates.
 
-### Instructions:
+### Instructions
 
 To run train & test using pre-trained **Resnet50**:
 
@@ -62,7 +62,7 @@ python test.py -m [PATH_TO_MODEL] -d [DIR_TO_DATA]
 To run **Tkinter GUI** script:
 
 ```python
-python pcam_gui.py
+python gui/pcam_gui.py
 ```
 
 To use **Tkinter GUI**:
@@ -71,11 +71,47 @@ To use **Tkinter GUI**:
 * Select a model weight file (.h5) to use for prediction (Default folder is /model_ckpt)
 * Press *Predict* to generate model prediction score
 
+
 Note: Tkinter GUI may become temporarily slow/responsive during model prediction.
 
 ![alt text](D:\School\Course Material\Term 8\50.021 - Artificial Intelligence\Project\pcam_ai\sample_gui.PNG)
 
+### Result & Analysis
+
+**Fine-tuning layers (Resnet50)**
 
 
+We have used different number of fine-tuning layers to do transfer learning on pre-trained Resnet50. Based on the result as shown in table 1, train with all layers give the best test accuracy. This is because PatchCamelyon images are very different from those in Imagenet dataset, pre-trained weights are bias to Imagenet patterns.
 
+| Number of fine-tuning layers | Test accuracy |
+| ---------------------------- | ------------- |
+| 1                            | 66.31%        |
+| 11                           | 77.47%        |
+| 16                           | 79.14%        |
+| 176 (All)                    | 84.70%        |
 
+*Result above are trained by Resnet50 with 0.5 dropout rates
+
+**Dropout layer (Resnet50)**
+
+Overfitting is one of the biggest issues when training our model. Dropout is one of the most popular methods to encounter it, so we have also tried different dropout rates. Based on the result as shown in table 2, dropout significantly avoid overfitting.
+
+| Dropout rate | Test accuracy |
+| ------------ | ------------- |
+| 0.0          | 68.92%        |
+| 0.5          | 77.47%        |
+| 0.7          | 79.14%        |
+
+*Result above are trained by Resnet50 with 11 fine-tuning layers
+
+**Fine-tuning layers (Densenet169)**
+
+Similar to the Resnet50 model, the Densenet169 model was trained with alterations to the trainable layers as shown in the table below.
+
+| Number of fine-tuning layers | Test accuracy |
+| ---------------------------- | ------------- |
+| 10                           | 67.97%        |
+| 20                           | 74.48%        |
+| 169 (All)                    | 85.42%        |
+
+*Result above are trained by Densenet169 with 0.5 dropout rates
