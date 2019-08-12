@@ -18,6 +18,14 @@ Due to the size and complexity of the dataset, a deep convolutional network woul
 
 ### Instructions
 
+**Dependencies**
+
+* Tensorflow (v1.4.1)
+* Keras (v2.1.3)
+* Tkinter (v8.6)
+
+
+
 To run train & test using pre-trained **Resnet50**:
 
 ```bash
