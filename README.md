@@ -62,7 +62,7 @@ python test.py -m [PATH_TO_MODEL] -d [DIR_TO_DATA]
 To run **Tkinter GUI** script:
 
 ```python
-python gui/pcam_gui.py
+python pcam_gui/pcam_gui.py
 ```
 
 To use **Tkinter GUI**:
