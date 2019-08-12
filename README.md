@@ -74,7 +74,7 @@ To use **Tkinter GUI**:
 
 Note: Tkinter GUI may become temporarily slow/responsive during model prediction.
 
-![alt text](D:\School\Course Material\Term 8\50.021 - Artificial Intelligence\Project\pcam_ai\sample_gui.PNG)
+![alt text](sample_gui.PNG)
 
 ### Result & Analysis
 
